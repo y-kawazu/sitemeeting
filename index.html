@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173f35">
+  <meta name="description" content="クライアントとの打ち合わせで、目的・ページ構成・確認事項・決定事項を一緒に整理するサイトマップ作成アプリ。">
+  <title>Site Meeting Board</title>
+  <link rel="stylesheet" href="styles.css?v=20260826-10">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Site Meeting Board ホーム">
+      <span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span><strong>Site Meeting</strong><small>サイト構成 打ち合わせボード</small></span>
+    </a>
+    <div class="save-state" id="saveState"><span></span>この端末に自動保存</div>
+    <div class="header-actions">
+      <button class="plain-btn" id="dataBtn" type="button">データ</button>
+      <button class="plain-btn" id="printBtn" type="button">印刷 / PDF</button>
+      <button class="dark-btn" id="reportBtn" type="button">打ち合わせ記録を保存</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="meeting-hero">
+      <div class="meeting-fields">
+        <label>CLIENT<input id="clientName" placeholder="クライアント名" autocomplete="organization"></label>
+        <label>PROJECT<input id="projectName" placeholder="プロジェクト名"></label>
+        <label>MEETING DATE<input id="meetingDate" type="date"></label>
+        <label>PARTICIPANTS<input id="participants" placeholder="参加者名を入力"></label>
+      </div>
+      <div class="meeting-title-row">
+        <div>
+          <p class="kicker">WEBSITE PLANNING SESSION</p>
+          <h1>一緒に考える、サイトの設計図</h1>
+          <p>話しながらページ構成と要件を整理し、認識のずれをその場でなくします。</p>
+        </div>
+        <div class="meeting-progress" aria-label="打ち合わせの進捗">
+          <div><span id="completionRate">0%</span><small>整理済み</small></div>
+          <div class="progress-track"><i id="progressBar"></i></div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="section-nav" aria-label="打ち合わせ項目">
+      <button class="active" data-scroll="overview" type="button"><span>01</span>目的をそろえる</button>
+      <button data-scroll="sitemap" type="button"><span>02</span>ページを考える</button>
+      <button data-scroll="discussion" type="button"><span>03</span>確認・決定する</button>
+      <button data-scroll="wireframe" type="button"><span>04</span>デザインラフを作る</button>
+    </nav>
+
+    <section class="section-block" id="overview">
+      <div class="section-heading">
+        <div><p class="kicker">01 / PROJECT OVERVIEW</p><h2>まず、サイトの目的をそろえる</h2></div>
+        <p>最初にここを共有すると、必要なページを判断しやすくなります。</p>
+      </div>
+      <div class="brief-grid">
+        <label class="brief-card accent-green">
+          <span class="card-number">A</span><strong>このサイトで達成したいこと</strong>
+          <textarea id="siteGoal" rows="4" placeholder="例：新規のお問い合わせを月10件に増やしたい"></textarea>
+        </label>
+        <label class="brief-card accent-orange">
+          <span class="card-number">B</span><strong>いちばん届けたい相手</strong>
+          <textarea id="targetUser" rows="4" placeholder="例：地域で依頼先を探している30〜50代の担当者"></textarea>
+        </label>
+        <label class="brief-card accent-blue">
+          <span class="card-number">C</span><strong>訪問者にしてほしい行動</strong>
+          <textarea id="mainAction" rows="4" placeholder="例：施工事例を見て、相談フォームから問い合わせる"></textarea>
+        </label>
+      </div>
+      <div class="scope-row">
+        <div class="scope-question">
+          <span>サイトの種類</span>
+          <div class="choice-chips" id="siteTypeChoices">
+            <button type="button" data-value="コーポレートサイト">コーポレート</button>
+            <button type="button" data-value="サービスサイト">サービス</button>
+            <button type="button" data-value="採用サイト">採用</button>
+            <button type="button" data-value="シングルカラムサイト">シングルカラム</button>
+            <button type="button" data-value="その他">その他</button>
+          </div>
+        </div>
+        <label class="scope-question"><span>公開希望時期</span><input id="launchTiming" placeholder="例：2026年12月末"></label>
+        <label class="scope-question"><span>おおよそのページ数</span><input id="pageBudget" placeholder="例：10〜15ページ"></label>
+      </div>
+    </section>
+
+    <section class="section-block sitemap-section" id="sitemap">
+      <div class="section-heading sitemap-heading">
+        <div><p class="kicker">02 / SITEMAP WORKSHOP</p><h2>必要なページを一緒に考える</h2></div>
+        <div class="sitemap-actions">
+          <div class="map-view-switch" aria-label="サイトマップ表示">
+            <button class="active" type="button" data-map-view="tree">ツリー図</button>
+            <button type="button" data-map-view="directory">ディレクトリマップ</button>
+          </div>
+          <div class="legend" aria-label="状態の凡例">
+            <span class="status confirmed">確定</span><span class="status pending">要確認</span><span class="status proposed">提案</span>
+          </div>
+          <button class="outline-btn" id="starterBtn" type="button">ひな形を選ぶ</button>
+          <button class="dark-btn" id="addPageBtn" type="button">＋ ページを追加</button>
+        </div>
+      </div>
+      <div class="sitemap-summary">
+        <span><strong id="totalPages">0</strong> ページ</span>
+        <span><strong id="headerPages">0</strong> ヘッダー項目</span>
+        <span><strong id="confirmedPages">0</strong> 確定</span>
+        <span><strong id="pendingPages">0</strong> 要確認</span>
+        <p id="mapHelp">同じ階層は横並びで表示します。カードを別のページへドラッグすると、その配下へ移動します。</p>
+      </div>
+      <div class="sitemap-canvas" id="sitemapCanvas"></div>
+      <div class="directory-map" id="directoryMap" hidden></div>
+      <div class="empty-sitemap" id="emptySitemap" hidden>
+        <span>まだページがありません</span>
+        <p>ひな形から始めるか、最初のページを追加してください。</p>
+        <button class="dark-btn" type="button" data-action="add-page">＋ 最初のページを追加</button>
+      </div>
+    </section>
+
+    <section class="section-block" id="discussion">
+      <div class="section-heading">
+        <div><p class="kicker">03 / DISCUSSION NOTES</p><h2>確認事項と決定事項を残す</h2></div>
+        <p>「誰が・いつまでに」まで決めると、次回の打ち合わせがスムーズです。</p>
+      </div>
+      <div class="discussion-grid">
+        <article class="note-panel questions-panel">
+          <header><div><span class="panel-icon">?</span><h3>確認事項</h3></div><button class="circle-btn" data-add-note="question" type="button" aria-label="確認事項を追加">＋</button></header>
+          <div class="note-list" id="questionList"></div>
+          <p class="panel-empty" data-empty="question">確認が必要なことを追加してください</p>
+        </article>
+        <article class="note-panel decisions-panel">
+          <header><div><span class="panel-icon">✓</span><h3>決定事項</h3></div><button class="circle-btn" data-add-note="decision" type="button" aria-label="決定事項を追加">＋</button></header>
+          <div class="note-list" id="decisionList"></div>
+          <p class="panel-empty" data-empty="decision">合意した内容をその場で記録します</p>
+        </article>
+        <article class="note-panel tasks-panel">
+          <header><div><span class="panel-icon">→</span><h3>次回までの宿題</h3></div><button class="circle-btn" data-add-note="task" type="button" aria-label="宿題を追加">＋</button></header>
+          <div class="note-list" id="taskList"></div>
+          <p class="panel-empty" data-empty="task">担当者と期限を決めて追加します</p>
+        </article>
+      </div>
+      <label class="free-memo"><span>自由メモ</span><textarea id="freeMemo" rows="6" placeholder="会話の中で出たアイデア、参考サイト、予算感などを自由に記録できます。"></textarea></label>
+    </section>
+
+    <section class="section-block wireframe-section" id="wireframe">
+      <div class="section-heading wireframe-heading">
+        <div><p class="kicker">04 / DESIGN ROUGH</p><h2>構成と一緒に、サイトの雰囲気を確認する</h2></div>
+        <p>サイトマップを反映した画面に、配色・写真・文字・余白のイメージを加え、完成後の印象まで確認できます。</p>
+      </div>
+      <div class="wireframe-toolbar">
+        <label class="wireframe-page-field"><span>作成するページ</span><select id="wireframePageSelect"></select></label>
+        <div class="wireframe-device-switch" aria-label="表示サイズ">
+          <button class="active" type="button" data-wire-device="desktop">PC</button>
+          <button type="button" data-wire-device="mobile">スマホ</button>
+        </div>
+        <div class="wireframe-mood-switch" aria-label="サイトの雰囲気">
+          <span>雰囲気</span>
+          <button type="button" data-wire-mood="trust">信頼感</button>
+          <button type="button" data-wire-mood="friendly">親しみ</button>
+          <button type="button" data-wire-mood="modern">洗練</button>
+        </div>
+        <button class="dark-btn" id="generateWireframeBtn" type="button">サイトマップから再作成</button>
+      </div>
+      <p class="wireframe-edit-help">操作：各ブロック下端の「二本線」を上下にドラッグすると高さを変更できます。画像枠はクリックして写真を追加できます。</p>
+      <div class="wireframe-page-summary" id="wireframePageSummary"></div>
+      <div class="wireframe-workspace">
+        <aside class="wireframe-library">
+          <div><p class="kicker">BLOCK LIBRARY</p><h3>ブロックを追加</h3></div>
+          <p>必要な要素を選ぶと、選択中のページの末尾に追加されます。</p>
+          <div class="wireframe-library-grid">
+            <button type="button" data-add-wire-block="hero"><span>▣</span>メインビジュアル</button>
+            <button type="button" data-add-wire-block="intro"><span>¶</span>文章・紹介</button>
+            <button type="button" data-add-wire-block="imageText"><span>◫</span>画像＋文章</button>
+            <button type="button" data-add-wire-block="features"><span>▦</span>特徴・強み</button>
+            <button type="button" data-add-wire-block="cards"><span>▤</span>一覧・カード</button>
+            <button type="button" data-add-wire-block="faq"><span>?</span>よくある質問</button>
+            <button type="button" data-add-wire-block="form"><span>✎</span>フォーム</button>
+            <button type="button" data-add-wire-block="cta"><span>→</span>お問い合わせ導線</button>
+            <button type="button" data-add-wire-block="footer"><span>━</span>フッター</button>
+          </div>
+        </aside>
+        <div class="wireframe-stage">
+          <div class="wireframe-stage-head"><span>WEBSITE DESIGN ROUGH</span><small>構成・写真・文字・余白の雰囲気を確認できます</small></div>
+          <div class="wireframe-frame desktop" id="wireframeCanvas"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer><strong>Site Meeting Board</strong><span>入力内容はこのブラウザ内だけに保存されます。</span></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <dialog class="dialog" id="pageDialog">
+    <form method="dialog" id="pageForm">
+      <div class="dialog-head"><div><p class="kicker">PAGE DETAILS</p><h2 id="pageDialogTitle">ページを追加</h2></div><button class="close-btn" type="button" data-close-dialog="pageDialog">×</button></div>
+      <input type="hidden" id="editingPageId"><input type="hidden" id="newParentId">
+      <div class="form-grid">
+        <label class="span-2">ページ名<input id="pageName" required maxlength="60" placeholder="例：サービス紹介"></label>
+        <label>URL / パス<input id="pagePath" maxlength="100" placeholder="/services/"></label>
+        <label>ページの状態<select id="pageStatus"><option value="proposed">提案</option><option value="pending">要確認</option><option value="confirmed">確定</option></select></label>
+        <label class="span-2">このページの役割<textarea id="pagePurpose" rows="3" maxlength="200" placeholder="誰に、何を伝え、どの行動につなげるページか"></textarea></label>
+        <label>優先度<select id="pagePriority"><option value="high">高い</option><option value="normal">普通</option><option value="low">低い</option></select></label>
+        <label class="check-row"><input id="pageNav" type="checkbox">グローバルナビに掲載</label>
+      </div>
+      <div class="dialog-actions"><button class="plain-btn" type="button" data-close-dialog="pageDialog">キャンセル</button><button class="dark-btn" type="submit">保存する</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="dialog small-dialog" id="noteDialog">
+    <form method="dialog" id="noteForm">
+      <div class="dialog-head"><div><p class="kicker">MEETING NOTE</p><h2 id="noteDialogTitle">確認事項を追加</h2></div><button class="close-btn" type="button" data-close-dialog="noteDialog">×</button></div>
+      <input type="hidden" id="noteType"><input type="hidden" id="editingNoteId">
+      <label>内容<textarea id="noteText" required rows="3" maxlength="240" placeholder="内容を入力"></textarea></label>
+      <div class="form-grid note-extra">
+        <label>担当者<input id="noteOwner" maxlength="40" placeholder="例：田中様"></label>
+        <label>期限<input id="noteDue" type="date"></label>
+      </div>
+      <div class="dialog-actions"><button class="plain-btn" type="button" data-close-dialog="noteDialog">キャンセル</button><button class="dark-btn" type="submit">追加する</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="dialog small-dialog" id="wireBlockDialog">
+    <form method="dialog" id="wireBlockForm">
+      <div class="dialog-head"><div><p class="kicker">WIREFRAME BLOCK</p><h2>ブロックを編集</h2></div><button class="close-btn" type="button" data-close-dialog="wireBlockDialog">×</button></div>
+      <input type="hidden" id="editingWireBlockId">
+      <label><span id="wireBlockTitleLabel">見出し</span><input id="wireBlockTitle" maxlength="80" placeholder="例：私たちが選ばれる理由"></label>
+      <label><span id="wireBlockTextLabel">説明</span><textarea id="wireBlockText" rows="4" maxlength="240" placeholder="このブロックで伝える内容"></textarea></label>
+      <div class="dialog-actions"><button class="plain-btn" type="button" data-close-dialog="wireBlockDialog">キャンセル</button><button class="dark-btn" type="submit">反映する</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="dialog starter-dialog" id="starterDialog">
+    <div class="dialog-head"><div><p class="kicker">STARTER MAP</p><h2>サイト構成のひな形</h2></div><button class="close-btn" type="button" data-close-dialog="starterDialog">×</button></div>
+    <p class="dialog-lead">打ち合わせの出発点を選びます。あとから自由に変更できます。</p>
+    <div class="starter-grid">
+      <button type="button" data-starter="corporate"><span>会社案内</span><strong>コーポレートサイト</strong><small>企業情報・事業・実績・採用・お問い合わせ</small></button>
+      <button type="button" data-starter="service"><span>集客</span><strong>サービスサイト</strong><small>悩み・特徴・料金・事例・申込み</small></button>
+      <button type="button" data-starter="single"><span>1ページ</span><strong>シングルカラムサイト</strong><small>主要コンテンツを縦一列にまとめる構成</small></button>
+      <button type="button" data-starter="blank"><span>白紙</span><strong>ゼロから考える</strong><small>構成を空にして打ち合わせを開始</small></button>
+    </div>
+  </dialog>
+
+  <dialog class="dialog small-dialog" id="dataDialog">
+    <div class="dialog-head"><div><p class="kicker">PROJECT DATA</p><h2>編集データ</h2></div><button class="close-btn" type="button" data-close-dialog="dataDialog">×</button></div>
+    <p class="dialog-lead">別の端末で続きを編集するときは、データファイルを保存してください。</p>
+    <div class="data-actions">
+      <button class="dark-btn" id="exportDataBtn" type="button">編集データを保存</button>
+      <button class="outline-btn" id="importDataBtn" type="button">編集データを読み込む</button>
+      <button class="danger-btn" id="resetBtn" type="button">新しい打ち合わせを始める</button>
+    </div>
+    <input id="fileInput" type="file" accept=".json,application/json" hidden>
+    <input id="wireImageInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+  </dialog>
+
+  <dialog class="dialog pdf-dialog" id="pdfDialog">
+    <div class="dialog-head"><div><p class="kicker">PRINT / PDF</p><h2>印刷用PDF</h2></div><button class="close-btn" type="button" data-close-dialog="pdfDialog">×</button></div>
+    <p class="dialog-lead">内容を確認してPDFを保存してください。保存したPDFから印刷できます。<strong id="pdfPageCount"></strong></p>
+    <div class="pdf-preview-wrap" id="pdfPreviewPages" aria-label="印刷用PDFの全ページプレビュー"></div>
+    <div class="dialog-actions"><button class="plain-btn" type="button" data-close-dialog="pdfDialog">閉じる</button><a class="dark-btn pdf-download-btn" id="pdfDownloadBtn" download>PDFを保存</a></div>
+  </dialog>
+
+  <template id="pageTemplate">
+    <li class="map-node">
+      <article class="page-card">
+        <div class="page-card-top"><span class="status"></span><span class="priority"></span></div>
+        <h3></h3><code></code><p></p>
+        <div class="page-card-actions">
+          <button type="button" data-action="add-child" title="子ページを追加">＋ 子</button>
+          <button type="button" data-action="wireframe-page" title="ワイヤーフレームを開く">WF</button>
+          <button type="button" data-action="edit-page" title="編集">編集</button>
+          <button type="button" data-action="delete-page" title="削除">×</button>
+        </div>
+      </article>
+      <ul class="map-children"></ul>
+    </li>
+  </template>
+
+  <script src="vendor/html2canvas.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="app.js?v=20260826-5"></script>
+</body>
+</html>
