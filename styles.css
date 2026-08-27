@@ -218,6 +218,15 @@ body:has(.map-node.dragging) .page-card{cursor:grabbing}
 .map-node>.map-children{margin-top:23px;padding-top:13px}
 @media(max-width:620px){.map-node>.map-children{margin-top:19px;padding-top:10px}}
 
+/* 第3階層以降は親ページの真下へ縦一列に並べる。 */
+.map-root>.map-node>.map-children .map-children:not([data-count="1"]){
+  width:min(205px,100%)!important;
+  max-width:100%!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  grid-template-columns:minmax(0,1fr)!important;
+}
+
 /* 階層を横に追える、打ち合わせ用のディレクトリーマップ。 */
 .directory-map{overflow:auto;background:#fff}
 .directory-table{width:100%;min-width:780px;border-collapse:collapse;table-layout:fixed;background:#fff}
